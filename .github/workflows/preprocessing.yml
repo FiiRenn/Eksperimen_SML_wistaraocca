@@ -35,11 +35,11 @@ jobs:
         
     - name: Verify CSV files are actual data (not LFS pointers)
       run: |
-        echo "=== Checking creditcarddata_raw/creditcard.csv ==="
-        head -2 creditcarddata_raw/creditcard.csv
+        echo "=== Checking creditcard_raw/creditcard.csv ==="
+        head -2 creditcard_raw/creditcard.csv
         echo ""
         echo "=== File size ==="
-        ls -lh creditcarddata_raw/creditcard.csv
+        ls -lh creditcard_raw/creditcard.csv
         
     - name: Run preprocessing script
       run: |

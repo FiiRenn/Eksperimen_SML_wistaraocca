@@ -1,0 +1,69 @@
+name: Automated Preprocessing Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  preprocessing:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        
+    - name: Check Python version
+      run: python --version
+      
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas numpy scikit-learn imbalanced-learn
+        
+    - name: List files before preprocessing
+      run: |
+        echo "=== Repository Structure ==="
+        ls -la
+        echo ""
+        echo "=== Data Raw Folder ==="
+        ls -la data_raw/
+        
+    - name: Run preprocessing script
+      run: |
+        python automate_wistaraocca.py
+        
+    - name: List files after preprocessing
+      run: |
+        echo "=== Preprocessing Folder ==="
+        ls -la preprocessing/
+        echo ""
+        echo "=== Training Data Preview ==="
+        head -5 preprocessing/creditcard_train.csv
+        echo ""
+        echo "=== Test Data Preview ==="
+        head -5 preprocessing/creditcard_test.csv
+        
+    - name: Upload preprocessed data as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: preprocessed-data
+        path: preprocessing/
+        retention-days: 30
+        
+    - name: Commit and push preprocessed data
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add preprocessing/
+        git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update preprocessed data [skip ci]"
+        git push || echo "Nothing to push or push failed"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

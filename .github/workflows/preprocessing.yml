@@ -14,6 +14,11 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        lfs: true  # Enable Git LFS
+      
+    - name: Pull LFS files
+      run: git lfs pull
       
     - name: Set up Python 3.12
       uses: actions/setup-python@v5
@@ -28,13 +33,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install pandas numpy scikit-learn imbalanced-learn
         
-    - name: List files before preprocessing
+    - name: Verify CSV files are actual data (not LFS pointers)
       run: |
-        echo "=== Repository Structure ==="
-        ls -la
+        echo "=== Checking data_raw/creditcard.csv ==="
+        head -2 data_raw/creditcard.csv
         echo ""
-        echo "=== Data Raw Folder ==="
-        ls -la data_raw/
+        echo "=== File size ==="
+        ls -lh data_raw/creditcard.csv
         
     - name: Run preprocessing script
       run: |

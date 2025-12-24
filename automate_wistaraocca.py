@@ -231,7 +231,7 @@ def preprocess_pipeline(input_path: str, output_dir: str = "preprocessing",
 
 if __name__ == "__main__":
     result = preprocess_pipeline(
-        input_path="creditcarddata_raw/creditcard.csv",
+        input_path="creditcard_raw/creditcard.csv",
         output_dir="preprocessing",
         test_size=0.2,
         random_state=42
